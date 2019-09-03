@@ -3,7 +3,6 @@ python: 2.7
 before_install:
   - virtualenv .testenv --no-download
   - .testenv/bin/pip install -r requirements.txt
-  - .testenv/bin/nosetests -v --with-doctest
   - rm -rf .testenv
 script:
   - pocuite -r pocs -u 1.1.1.1
