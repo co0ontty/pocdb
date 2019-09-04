@@ -7,7 +7,8 @@ before_install:
 #  - make check
 script:
   - source .testenv/bin/activate
-  - pocsuite -r pocs/ -u 127.0.0.1
+  # - pocsuite -r pocs/ -u 127.0.0.1
+  - python pocs/cve_2019_2725.py
   - rm -rf .testenv
 notifications:
   email:

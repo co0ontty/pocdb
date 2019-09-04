@@ -5,7 +5,7 @@ from pocsuite.api.poc import Output, POCBase
 from pocsuite.api.request import req
 from urlparse import urlparse, urljoin
 import urllib
-import strings
+import string
 
 
 class TestPOC(POCBase):

