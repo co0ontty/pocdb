@@ -1,7 +1,7 @@
 #!/bin/sh 
 info=`pocsuite -r pocs -u 127.0.0.1`
-# echo "info: "${info}
-text="register" 
+text="register"
+eval 'pocsuite -r pocs -u 127.0.0.1'
 result=$(echo $info | grep "${text}")
 if [ "$result" != "" ]
 then
