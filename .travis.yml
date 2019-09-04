@@ -5,7 +5,7 @@ before_install:
   - .testenv/bin/pip install -r requirements.txt
   - rm -rf .testenv
 script:
-  - pocuite -r pocs -u 1.1.1.1
+  - pocuite -r pocs/ -u 127.0.0.1
 notifications:
   email:
     recipients:
