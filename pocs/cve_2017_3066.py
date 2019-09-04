@@ -19,7 +19,7 @@ class TestPOC(POCBase):
     name = 'Adobe ColdFusion 反序列化漏洞（CVE-2017-3066）'
     appPowerLink = 'https://coldfusion.adobe.com/'
     appName = 'Adobe ColdFusion'
-    appVersion = 'version < (2016 release) Update 3 or ColdFusion 11 Update 11 or ColdFusion 10 Update 22'
+    appVersion = '2016 Update 3,ColdFusion11 Update 11,ColdFusion10 Update 22'
     vulType = '命令执行'
     desc = '''
     攻击者可利用该漏洞在受影响应用程序的上下文中执行任意代码或造成拒绝服务。以下版本受到影响：Adobe ColdFusion (2016 release) Update 3及之前的版本，ColdFusion 11 Update 11及之前的版本，ColdFusion 10 Update 22及之前的版本。
