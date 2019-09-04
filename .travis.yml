@@ -1,9 +1,10 @@
 language: python
 python: 2.7
 before_install:
-  - virtualenv .testenv --no-download
-  - .testenv/bin/pip install -r requirements.txt
-  - rm -rf .testenv
+   - make check
+#  - virtualenv .testenv --no-download
+#  - .testenv/bin/pip install -r requirements.txt
+#  - rm -rf .testenv
 script:
   - pocuite -r pocs/ -u 127.0.0.1
 notifications:
