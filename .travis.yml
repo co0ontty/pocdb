@@ -1,11 +1,12 @@
 language: python
 python: 2.7
 before_install:
-#  - make check
-script:
   - virtualenv .testenv --no-download
   - .testenv/bin/pip install -r requirements.txt
   - .testenv/bin/nosetests -v --with-doctest
+#  - make check
+script:
+  - source .testenv/bin/activate
   - rm -rf .testenv
 notifications:
   email:
