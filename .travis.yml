@@ -7,7 +7,8 @@ before_install:
 #  - make check
 script:
   - source .testenv/bin/activate
-  - sh .check.sh
+  - sh .check_poc.sh
+  - sh .check_exp.sh
   - rm -rf .testenv
 notifications:
   email:
