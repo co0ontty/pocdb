@@ -7,6 +7,7 @@ before_install:
 #  - make check
 script:
   - source .testenv/bin/activate
+  - pocsuite -h
   - rm -rf .testenv
 notifications:
   email:
