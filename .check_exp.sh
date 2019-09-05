@@ -1,4 +1,5 @@
-#!/bin/sh 
+#!/bin/sh
+echo "exp check"
 info_exp=`pocsuite -r exps -u 127.0.0.1 `
 text_exp="register"
 eval 'pocsuite -r pocs -f target.txt --thread 40'
