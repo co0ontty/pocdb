@@ -1,5 +1,5 @@
 #!/bin/sh
-echo "poc check"
+echo "---------poc check----------"
 info_poc=`pocsuite -r pocs -u 127.0.0.1 `
 text_poc="register"
 eval 'pocsuite -r pocs -f target.txt --thread 40'
