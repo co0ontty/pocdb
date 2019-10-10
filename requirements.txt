@@ -1,3 +1,4 @@
 pocsuite
 nose
 requests
+virtualenv
