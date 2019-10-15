@@ -2,3 +2,4 @@ pocsuite
 nose
 requests
 virtualenv
+pymongo
