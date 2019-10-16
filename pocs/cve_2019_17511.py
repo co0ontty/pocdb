@@ -34,7 +34,6 @@ class TestPOC(POCBase):
             result['VerifyInfo'] = {}
             result['VerifyInfo']['URL'] = self.url
             result['VerifyInfo']['LOG'] = url
-            print len(log_resp.text)
 
         return self.parse_output(result)
 
