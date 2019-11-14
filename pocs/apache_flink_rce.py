@@ -99,6 +99,7 @@ class TestPOC(POCBase):
             if r:
                 result['VerifyInfo'] = {}
                 result['VerifyInfo'] = "{}".format(r.replace('\\n', '\n'))
+                result['VerifyInfo'] = self.url
         except :
             pass
         return self.parse_output(result)
