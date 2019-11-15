@@ -8,8 +8,8 @@ script:
 - source .testenv/bin/activate
 - sh .check_poc.sh
 - sh .check_exp.sh
-- tar -zcvf build/pocdb.tar.gz ./
 - rm -rf .testenv
+- tar -zcvf build/pocdb.tar.gz pocs exps target
 notifications:
   email:
     recipients:
