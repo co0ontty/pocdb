@@ -9,7 +9,6 @@ script:
 - sh .check_poc.sh
 - sh .check_exp.sh
 - rm -rf .testenv
-- sh .tar.sh
 notifications:
   email:
     recipients:
