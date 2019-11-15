@@ -9,7 +9,7 @@ script:
 - sh .check_poc.sh
 - sh .check_exp.sh
 - rm -rf .testenv
-- tar -zcvf build/pocdb.tar.gz pocs exps target
+- sh .tar.sh
 notifications:
   email:
     recipients:
