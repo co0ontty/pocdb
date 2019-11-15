@@ -1,9 +1,9 @@
 #!/bin/sh
 echo "---------poc check----------"
-info_poc=`pocsuite -r pocs -u 127.0.0.1 `
-text_poc="register"
+poc_command=`pocsuite -r pocs -u 127.0.0.1 `
+error_message="register"
 eval 'pocsuite -r pocs -f target.txt --thread 40'
-result_poc=$(echo $info_poc | grep "${text_poc}")
+result_poc=$(echo $poc_command | grep "${error_message}")
 if [ "$result_poc" != "" ]
 then
 	echo "failed"
