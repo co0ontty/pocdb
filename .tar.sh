@@ -1,2 +1,2 @@
 #!/bin/sh
-eval tar -zcvf build/pocdb.tar.gz pocs exps target
+eval tar -zcvf build/pocdb.tar.gz ./
