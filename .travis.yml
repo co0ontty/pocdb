@@ -16,3 +16,11 @@ notifications:
       - co0ontty@aliyun.com
     on_success: never # default: change
     on_failure: always # default: always
+deploy:
+  provider: releases
+  api_key:
+    secure: VTUH1acj4Yp_o5jwOXK3Lg
+  file: build/sources.zip
+  skip_cleanup: true
+  on:
+    tags: true
