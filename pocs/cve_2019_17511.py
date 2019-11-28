@@ -30,7 +30,7 @@ class TestPOC(POCBase):
         result = {}
         url = urljoin(self.url, 'log_get.php')
         log_resp = req.get(url)
-        if log_resp.text:
+        if log_resp.text and log_resp.status_code != 404:
             result['VerifyInfo'] = {}
             result['VerifyInfo']['URL'] = self.url
             result['VerifyInfo']['LOG'] = url
