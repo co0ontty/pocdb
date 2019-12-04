@@ -3,3 +3,4 @@ nose
 requests
 virtualenv
 pymongo
+pwntools
