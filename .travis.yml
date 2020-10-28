@@ -1,0 +1,27 @@
+language: python
+python: 2.7
+before_install:
+- virtualenv .testenv --no-download
+- ".testenv/bin/pip install -r requirements.txt"
+- ".testenv/bin/nosetests -v --with-doctest"
+script:
+- source .testenv/bin/activate
+- sh .check_poc.sh
+- sh .check_exp.sh
+- rm -rf .testenv
+notifications:
+  email:
+    recipients:
+    - co0ontty@aliyun.com
+    on_success: never
+    on_failure: always
+before_deploy:
+    - tar -zcvf pocdb.tar.gz ./*
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: jrUhkYBpNRWxhNgbraL1e6lkyUVfdm3HZITy2KbAEyemHwUWtHjqsZTkL8UdHAohKnVwAHd/4awwNLVs6ZVbQ5RlxtIBijYszkHYp2KklamODa3zb/QmNTd02hJ9uv2l0jlKHdKnGoVYerSVKHePh9olCBiQHH4nB62zkQn4RW2AgwgkQG3dNFGvILfkoeJKtPELrUHifxGiFy6cWbPTBPOjwefvsj3NQi8tvcmpMYLZjllMWgCYubrbUWtOgOqKxRz240F0AX/t4tK6LgiFyw+B18BRk43f7GVCNOCObwEnQKIMzCD8jeyiwTKS9Dc5z0CXv8PMPVS6VCrcTyF6prmk8dYa0BNrs2zWgAXlLM2hqgq5HoFCM9HLRhGH6LLOp4XUI2D4u8DRPb2pZwTs5PLZ4Npr7UbMGygHMHltDI3pWlBnOlYbrN0bgHPpETbb9CttQglew9HD5K4mTBB4Vf3M02jXAWH8xh9nManPjhr3VRIf/kqpjLFbragzsSH9BmE9G2VeIkxhskqTNtc+zMrqfFRq9rNTFB6c7TasHUDMJ13uDUcTW4tGPnwd/8o9R+HCuEppJ/UzZLY4I63BqzwbCfOYx90BV5V+w3V+5JryzVc687qdPHGk5VU0SWM3SMZAcEbP2WHseKqbrwCpPpxxOCWWq95hj03868TJH8o=
+  file: pocdb.tar.gz
+  on:
+    tags: true

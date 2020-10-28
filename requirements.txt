@@ -1,0 +1,6 @@
+pocsuite
+nose
+requests
+virtualenv
+pymongo
+pwntools
